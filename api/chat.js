@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
     const response =
       await fetch(
-        "https://api.openai.com/v1/chat/completions",
+        "https://openrouter.ai/api/v1/chat/completions",
         {
           method:"POST",
 
@@ -15,18 +15,27 @@ export default async function handler(req, res) {
             "Content-Type":"application/json",
 
             Authorization:
-              `Bearer ${process.env.OPENAI_API_KEY}`
+              `Bearer ${process.env.OPENROUTER_API_KEY}`,
+
+            "HTTP-Referer":
+              "https://fakeimgat-site.vercel.app",
+
+            "X-Title":
+              "fakeimgat-site"
           },
 
           body:JSON.stringify({
 
-            model:"gpt-4o-mini",
+            model:
+              "meta-llama/llama-3-8b-instruct:free",
 
             messages:[
+
               {
                 role:"system",
+
                 content:
-                "you are a dark cyberpunk ai assistant"
+                "you are a dark cyberpunk ai assistant. answer shortly."
               },
 
               {
@@ -55,8 +64,9 @@ export default async function handler(req, res) {
     res.status(200).json({
 
       reply:
-        data.choices[0]
-        .message.content
+        data.choices?.[0]
+        ?.message?.content
+        || "no response"
     });
 
   } catch(err){
