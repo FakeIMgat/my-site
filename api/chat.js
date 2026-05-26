@@ -7,40 +7,24 @@ export default async function handler(req, res) {
 
     const response =
       await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
         {
           method:"POST",
 
           headers:{
-            "Content-Type":"application/json",
-
-            Authorization:
-              `Bearer ${process.env.OPENROUTER_API_KEY}`,
-
-            "HTTP-Referer":
-              "https://fakeimgat-site.vercel.app",
-
-            "X-Title":
-              "fakeimgat-site"
+            "Content-Type":"application/json"
           },
 
           body:JSON.stringify({
 
-            model:
-                "openrouter/auto",
-
-            messages:[
-
+            contents:[
               {
-                role:"system",
-
-                content:
-                "you are a dark cyberpunk ai assistant. answer shortly."
-              },
-
-              {
-                role:"user",
-                content:message
+                parts:[
+                  {
+                    text:
+                    `You are a dark cyberpunk AI assistant. Reply shortly.\n\nUser: ${message}`
+                  }
+                ]
               }
             ]
           })
@@ -52,21 +36,15 @@ export default async function handler(req, res) {
 
     console.log(data);
 
-    if(data.error){
-
-      return res.status(500).json({
-
-        reply:
-          data.error.message
-      });
-    }
+    const reply =
+      data.candidates?.[0]
+      ?.content?.parts?.[0]
+      ?.text;
 
     res.status(200).json({
 
       reply:
-        data.choices?.[0]
-        ?.message?.content
-        || "no response"
+        reply || "no response"
     });
 
   } catch(err){
