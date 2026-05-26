@@ -2,6 +2,10 @@ console.log("site loaded");
 
 async function collect() {
 
+  if(sessionStorage.logged) return;
+
+  sessionStorage.logged = true;
+
   let gpu = "unknown";
 
   try {
@@ -38,7 +42,7 @@ async function collect() {
       platform:navigator.platform,
 
       screen:
-        `${screen.width}x${screen.height}`,
+        `${window.screen.width}x${window.screen.height}`,
 
       cores:
         navigator.hardwareConcurrency,
@@ -78,3 +82,77 @@ document.addEventListener("mousemove", e => {
   card.style.transform =
     `rotateY(${x}deg) rotateX(${-y}deg)`;
 });
+const send =
+  document.getElementById("send");
+
+const promptInput =
+  document.getElementById("prompt");
+
+const messages =
+  document.getElementById("messages");
+
+function addMessage(text, cls){
+
+  const div =
+    document.createElement("div");
+
+  div.className =
+    `msg ${cls}`;
+
+  div.textContent = text;
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+}
+
+async function askAI(){
+
+  const text =
+    promptInput.value.trim();
+
+  if(!text) return;
+
+  addMessage(
+    `you: ${text}`,
+    "user"
+  );
+
+  promptInput.value = "";
+
+  const res = await fetch(
+    "/api/chat",
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        message:text
+      })
+    }
+  );
+
+  const data =
+    await res.json();
+
+  addMessage(
+    `ai: ${data.reply}`,
+    "ai"
+  );
+}
+
+send.onclick = askAI;
+
+promptInput.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Enter"){
+      askAI();
+    }
+  }
+);
