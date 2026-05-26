@@ -22,7 +22,9 @@ export default async function handler(req, res) {
                 parts:[
                   {
                     text:
-                    `You are a dark cyberpunk AI assistant. Reply shortly.\n\nUser: ${message}`
+`You are a dark cyberpunk AI assistant.
+
+User: ${message}`
                   }
                 ]
               }
@@ -36,6 +38,15 @@ export default async function handler(req, res) {
 
     console.log(data);
 
+    if(data.error){
+
+      return res.status(500).json({
+
+        reply:
+          data.error.message
+      });
+    }
+
     const reply =
       data.candidates?.[0]
       ?.content?.parts?.[0]
@@ -44,7 +55,7 @@ export default async function handler(req, res) {
     res.status(200).json({
 
       reply:
-        reply || "no response"
+        reply || "empty response"
     });
 
   } catch(err){
