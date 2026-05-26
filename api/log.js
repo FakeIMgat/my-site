@@ -17,11 +17,14 @@ export default async function handler(req, res) {
 NEW VISITOR
 ━━━━━━━━━━━━━━━━━━
 
-TIME: ${now}
+TIME:
+${now}
 
-IP: ${ip}
+IP:
+${ip}
 
-URL: ${body.url}
+URL:
+${body.url}
 
 BROWSER:
 ${ua}
@@ -48,7 +51,7 @@ GPU:
 ${body.gpu}
 
 LANG:
-${navigator?.language || "unknown"}
+${body.language}
 
 ━━━━━━━━━━━━━━━━━━
 `);

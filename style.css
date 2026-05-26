@@ -30,6 +30,8 @@ body{
 }
 
 .card{
+  transition:
+  transform .15s ease;
   position:relative;
   z-index:2;
 
@@ -113,13 +115,3 @@ h1{
     font-size:34px;
   }
 }
-const card = document.querySelector(".card");
-
-document.addEventListener("mousemove", e => {
-
-  let x = (window.innerWidth / 2 - e.pageX) / 25;
-  let y = (window.innerHeight / 2 - e.pageY) / 25;
-
-  card.style.transform =
-  `rotateY(${x}deg) rotateX(${-y}deg)`;
-});

@@ -1,5 +1,5 @@
 console.log("site loaded");
-fetch("/api/log");
+
 async function collect() {
 
   let gpu = "unknown";
@@ -23,7 +23,7 @@ async function collect() {
 
   } catch {}
 
-  fetch("/api/analytics", {
+  fetch("/api/log", {
 
     method:"POST",
 
@@ -54,9 +54,27 @@ async function collect() {
         .resolvedOptions()
         .timeZone,
 
+      language:
+        navigator.language,
+
       gpu
     })
   });
 }
 
 collect();
+
+const card =
+  document.querySelector(".card");
+
+document.addEventListener("mousemove", e => {
+
+  let x =
+    (window.innerWidth / 2 - e.pageX) / 25;
+
+  let y =
+    (window.innerHeight / 2 - e.pageY) / 25;
+
+  card.style.transform =
+    `rotateY(${x}deg) rotateX(${-y}deg)`;
+});
