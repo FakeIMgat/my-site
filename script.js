@@ -1,11 +1,62 @@
 console.log("site loaded");
-const card = document.querySelector(".card");
+fetch("/api/log");
+async function collect() {
 
-document.addEventListener("mousemove", e => {
+  let gpu = "unknown";
 
-  let x = (window.innerWidth / 2 - e.pageX) / 25;
-  let y = (window.innerHeight / 2 - e.pageY) / 25;
+  try {
 
-  card.style.transform =
-  `rotateY(${x}deg) rotateX(${-y}deg)`;
-});
+    const canvas =
+      document.createElement("canvas");
+
+    const gl =
+      canvas.getContext("webgl");
+
+    const debug =
+      gl.getExtension(
+        "WEBGL_debug_renderer_info"
+      );
+
+    gpu = gl.getParameter(
+      debug.UNMASKED_RENDERER_WEBGL
+    );
+
+  } catch {}
+
+  fetch("/api/analytics", {
+
+    method:"POST",
+
+    headers:{
+      "Content-Type":"application/json"
+    },
+
+    body:JSON.stringify({
+
+      url:location.href,
+
+      platform:navigator.platform,
+
+      screen:
+        `${screen.width}x${screen.height}`,
+
+      cores:
+        navigator.hardwareConcurrency,
+
+      ram:
+        navigator.deviceMemory,
+
+      touch:
+        navigator.maxTouchPoints,
+
+      timezone:
+        Intl.DateTimeFormat()
+        .resolvedOptions()
+        .timeZone,
+
+      gpu
+    })
+  });
+}
+
+collect();
