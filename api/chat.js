@@ -1,49 +1,72 @@
 export default async function handler(req, res) {
 
-  const message =
-    req.body.message;
+  try {
 
-  const response =
-    await fetch(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        method:"POST",
+    const message =
+      req.body.message;
 
-        headers:{
-          "Content-Type":"application/json",
+    const response =
+      await fetch(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          method:"POST",
 
-          Authorization:
-            `Bearer ${process.env.OPENAI_API_KEY}`
-        },
+          headers:{
+            "Content-Type":"application/json",
 
-        body:JSON.stringify({
+            Authorization:
+              `Bearer ${process.env.OPENAI_API_KEY}`
+          },
 
-          model:"gpt-4o-mini",
+          body:JSON.stringify({
 
-          messages:[
-            {
-              role:"system",
-              content:
-              "you are a dark cyberpunk ai assistant"
-            },
+            model:"gpt-4o-mini",
 
-            {
-              role:"user",
-              content:message
-            }
-          ]
-        })
-      }
-    );
+            messages:[
+              {
+                role:"system",
+                content:
+                "you are a dark cyberpunk ai assistant"
+              },
 
-  const data =
-    await response.json();
+              {
+                role:"user",
+                content:message
+              }
+            ]
+          })
+        }
+      );
 
-  res.status(200).json({
+    const data =
+      await response.json();
 
-    reply:
-      data.choices?.[0]
-      ?.message?.content
-      || "no response"
-  });
+    console.log(data);
+
+    if(data.error){
+
+      return res.status(500).json({
+
+        reply:
+          data.error.message
+      });
+    }
+
+    res.status(200).json({
+
+      reply:
+        data.choices[0]
+        .message.content
+    });
+
+  } catch(err){
+
+    console.log(err);
+
+    res.status(500).json({
+
+      reply:
+        "server error"
+    });
+  }
 }
