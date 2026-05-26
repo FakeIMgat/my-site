@@ -22,7 +22,7 @@ export default async function handler(req, res) {
                 parts:[
                   {
                     text:
-`You are a dark cyberpunk AI assistant.
+`Answer short.
 
 User: ${message}`
                   }
